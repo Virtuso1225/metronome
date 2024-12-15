@@ -1,30 +1,15 @@
-import { View, PanResponder, Dimensions, GestureResponderEvent, PanResponderGestureState } from 'react-native'
-import { useState, useRef } from 'react'
-import { Center, Progress, ProgressFilledTrack } from '@/components/ui'
+import { View, PanResponder, GestureResponderEvent } from 'react-native'
+import { useRef } from 'react'
+import { Center, Progress } from '@/components/ui'
 
-interface MusicProgressProps {
+type MusicProgressProps = {
   onProgressChange?: (progress: number) => void
-  initialProgress?: number
+  progress: number
+  setProgress: (progress: number) => void
 }
 
-type MeasureCallback = (x: number, y: number, width: number, height: number, pageX: number, pageY: number) => void
-
-const MusicProgress: React.FC<MusicProgressProps> = ({ onProgressChange, initialProgress = 0 }) => {
-  const [progress, setProgress] = useState<number>(initialProgress)
+const MusicProgress: React.FC<MusicProgressProps> = ({ onProgressChange, progress, setProgress }) => {
   const progressRef = useRef<View | null>(null)
-  const progressWidth = useRef<number>(0)
-
-  const calculateProgress = (pageX: number, measureCallback: MeasureCallback): void => {
-    progressRef.current?.measure((x, y, width, height, containerPageX, pageY) => {
-      progressWidth.current = width
-      const touchX = pageX - containerPageX
-      const percentage = (touchX / width) * 100
-      const newProgress = Math.min(Math.max(percentage, 0), 100)
-      setProgress(newProgress)
-      onProgressChange?.(newProgress)
-      measureCallback(x, y, width, height, containerPageX, pageY)
-    })
-  }
 
   const panResponder = useRef(
     PanResponder.create({
@@ -32,16 +17,33 @@ const MusicProgress: React.FC<MusicProgressProps> = ({ onProgressChange, initial
       onMoveShouldSetPanResponder: () => true,
 
       onPanResponderGrant: (evt: GestureResponderEvent) => {
-        calculateProgress(evt.nativeEvent.pageX, () => {})
+        if (!progressRef.current) return
+        progressRef.current.measure((x, y, width, height, pageXOffset) => {
+          const touchX = evt.nativeEvent.pageX - pageXOffset
+          const newProgress = Math.max(0, Math.min((touchX / width) * 100, 100))
+          onProgressChange?.(newProgress)
+          setProgress(newProgress)
+        })
       },
 
-      onPanResponderMove: (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-        calculateProgress(evt.nativeEvent.pageX, () => {})
+      onPanResponderMove: (evt: GestureResponderEvent) => {
+        if (!progressRef.current) return
+        progressRef.current.measure((x, y, width, height, pageXOffset) => {
+          const touchX = evt.nativeEvent.pageX - pageXOffset
+          const newProgress = Math.max(0, Math.min((touchX / width) * 100, 100))
+          onProgressChange?.(newProgress)
+          setProgress(newProgress)
+        })
       },
 
-      // 필요한 경우 터치가 끝났을 때의 처리
-      onPanResponderRelease: (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-        // 터치가 끝났을 때의 추가 로직
+      onPanResponderRelease: (evt: GestureResponderEvent) => {
+        if (!progressRef.current) return
+        progressRef.current.measure((x, y, width, height, pageXOffset) => {
+          const touchX = evt.nativeEvent.pageX - pageXOffset
+          const newProgress = Math.max(0, Math.min((touchX / width) * 100, 100))
+          onProgressChange?.(newProgress)
+          setProgress(newProgress)
+        })
       },
     }),
   ).current
@@ -50,12 +52,10 @@ const MusicProgress: React.FC<MusicProgressProps> = ({ onProgressChange, initial
     <Center
       className="flex flex-col"
       ref={progressRef}
-      style={{ paddingHorizontal: 48, paddingVertical: 12 }}
+      style={{ paddingVertical: 12, marginHorizontal: 48 }}
       {...panResponder.panHandlers}
     >
-      <Progress value={progress} size="sm" className="w-full h-1.5">
-        <ProgressFilledTrack className="h-1" />
-      </Progress>
+      <Progress value={progress} size="sm" className="w-full h-1.5" />
     </Center>
   )
 }

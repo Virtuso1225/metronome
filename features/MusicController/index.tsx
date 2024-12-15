@@ -1,20 +1,27 @@
 import { View, Icon } from '@/components/ui'
 import * as s from './style.css'
 import React from 'react'
-import { Play, SkipBack, SkipForward } from 'lucide-react-native'
+import { Pause, Play, SkipBack, SkipForward } from 'lucide-react-native'
 import { Pressable } from 'react-native'
 import { vars } from '@/constants/vars'
 
-const MusicController = () => {
+type Props = {
+  playing: boolean
+  handlePlay: () => void
+  handleSeekStart: () => void
+  handleSeekEnd: () => void
+}
+
+const MusicController = ({ playing, handlePlay, handleSeekStart, handleSeekEnd }: Props) => {
   return (
     <View className={s.Wrapper({})}>
-      <Pressable>
+      <Pressable onPress={handleSeekStart}>
         <Icon as={SkipBack} size="xl" color={vars.$scale.color.primary700} />
       </Pressable>
-      <Pressable>
-        <Icon as={Play} size="xl" color={vars.$scale.color.primary700} />
+      <Pressable onPress={handlePlay}>
+        <Icon as={playing ? Pause : Play} size="xl" color={vars.$scale.color.primary700} />
       </Pressable>
-      <Pressable>
+      <Pressable onPress={handleSeekEnd}>
         <Icon as={SkipForward} size="xl" color={vars.$scale.color.primary700} />
       </Pressable>
     </View>

@@ -1,34 +1,34 @@
 import { HorizontalSpacing, Image, Text, View } from '@/components/ui'
 import BpmController from '@/features/BpmController'
 import MusicController from '@/features/MusicController'
+import { useYoutubeController } from '@/features/MusicController/utils/useYoutubeController'
 import MusicProgress from '@/features/MusicProgress'
-import { useRef } from 'react'
-
+import { useCallback, useEffect, useRef, useState } from 'react'
+import YoutubePlayer from 'react-native-youtube-iframe'
 interface Sound {
   getDuration: () => number
   setPositionAsync: (position: number) => Promise<void>
 }
 
 const MusicPlayer = () => {
+  const {
+    playing,
+    duration,
+    currentTime,
+    handlePlay,
+    handleSeekStart,
+    handleSeekEnd,
+    youtubeRef,
+    progress,
+    handleProgressChange,
+  } = useYoutubeController()
+
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60)
     const seconds = Math.floor(time % 60)
     return `${minutes}:${seconds.toString().padStart(2, '0')}`
   }
 
-  const soundRef = useRef<Sound | null>(null)
-
-  const handleProgressChange = async (newProgress: number) => {
-    if (soundRef.current) {
-      try {
-        const duration = soundRef.current.getDuration()
-        const newPosition = (duration * newProgress) / 100
-        await soundRef.current.setPositionAsync(newPosition)
-      } catch (error) {
-        console.error('Error setting audio position:', error)
-      }
-    }
-  }
   return (
     <View className="flex flex-col h-full bg-background-0/80 backdrop-blur-xl">
       <View className="p-12 overflow-hidden">
@@ -40,22 +40,35 @@ const MusicPlayer = () => {
           />
         </View>
       </View>
+      <YoutubePlayer
+        height={0}
+        play={playing}
+        playbackRate={1}
+        ref={youtubeRef}
+        videoId={'JqBU5BvBle8'}
+        webViewStyle={{ display: 'flex' }}
+      />
       <View className="flex flex-col items-center p-5">
         <Text className="mb-1 text-2xl font-semibold text-primary-900">Midnight City</Text>
         <Text className="text-base text-gray-500">M83</Text>
         <Text className="mt-1 text-sm text-gray-400">Hurry Up, We're Dreaming</Text>
       </View>
       <HorizontalSpacing size={10} />
-      <MusicProgress onProgressChange={handleProgressChange} initialProgress={0} />
+      <MusicProgress progress={progress} setProgress={handleProgressChange} onProgressChange={handleProgressChange} />
       <View className="flex flex-row justify-between text-[13px] text-gray-500 px-12">
-        <Text>{formatTime(0)}</Text>
-        <Text>-{formatTime(60 * 3 - 0)}</Text>
+        <Text>{formatTime(currentTime)}</Text>
+        <Text>{formatTime(duration)}</Text>
       </View>
       <HorizontalSpacing size={20} />
-      <MusicController />
+      <MusicController
+        playing={playing}
+        handlePlay={handlePlay}
+        handleSeekStart={handleSeekStart}
+        handleSeekEnd={handleSeekEnd}
+      />
       <HorizontalSpacing size={20} />
       <BpmController />
-      <MusicProgress onProgressChange={handleProgressChange} initialProgress={0} />
+      {/* <MusicProgress onProgressChange={handleProgressChange} initialProgress={0} /> */}
     </View>
   )
 }

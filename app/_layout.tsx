@@ -47,7 +47,7 @@ const RootLayout = () => {
   }
 
   return (
-    <GluestackUIProvider mode="dark">
+    <GluestackUIProvider mode="light">
       <RootLayoutNav />
     </GluestackUIProvider>
   )
