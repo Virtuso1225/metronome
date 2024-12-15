@@ -1,23 +1,13 @@
 import React from 'react'
-import FontAwesome from '@expo/vector-icons/FontAwesome'
-import { Link, Tabs } from 'expo-router'
-import { Pressable } from 'react-native'
+import { Tabs } from 'expo-router'
 
-import Colors from '@/constants/Colors'
-import { useColorScheme } from '@/components/useColorScheme'
 import { useClientOnlyValue } from '@/components/useClientOnlyValue'
 import { vars } from '@/constants/vars'
 import { Icon } from '@/components/ui/icon'
-import { AudioLinesIcon, HomeIcon } from 'lucide-react-native'
+import { View } from '@/components/ui/view'
+import { AudioLinesIcon, Home } from 'lucide-react-native'
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: { name: React.ComponentProps<typeof FontAwesome>['name']; color: string }) {
-  return <Icon as={AudioLinesIcon} color={props.color} />
-}
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme()
-
+const TabLayout = () => {
   return (
     <Tabs
       screenOptions={{
@@ -26,36 +16,26 @@ export default function TabLayout() {
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
+        animation: 'shift',
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="(Player)"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          header: () => <View className="h-20 bg-background-0/80" />,
+          title: 'Home',
+          tabBarIcon: ({ color }) => <Icon as={Home} color={color} />,
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="two"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'EQ',
+          tabBarIcon: ({ color }) => <Icon as={AudioLinesIcon} color={color} />,
         }}
-      />
+      /> */}
     </Tabs>
   )
 }
+
+export default TabLayout
