@@ -47,7 +47,12 @@ const MusicProgress: React.FC<MusicProgressProps> = ({ onProgressChange, initial
   ).current
 
   return (
-    <Center className="flex px-12" ref={progressRef} {...panResponder.panHandlers}>
+    <Center
+      className="flex flex-col"
+      ref={progressRef}
+      style={{ paddingHorizontal: 48, paddingVertical: 12 }}
+      {...panResponder.panHandlers}
+    >
       <Progress value={progress} size="sm" className="w-full h-1.5">
         <ProgressFilledTrack className="h-1" />
       </Progress>

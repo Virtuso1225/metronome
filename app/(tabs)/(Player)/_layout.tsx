@@ -1,7 +1,6 @@
-import { useClientOnlyValue } from '@/components/useClientOnlyValue'
 import { Stack } from 'expo-router'
 import React from 'react'
-import { View } from '@/components/ui'
+import { useColorScheme } from 'react-native'
 
 export default function PlayerLayout() {
   return (

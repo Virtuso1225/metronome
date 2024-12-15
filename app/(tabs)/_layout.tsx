@@ -20,6 +20,7 @@ const TabLayout = () => {
       }}
     >
       <Tabs.Screen
+        // key={colorScheme}
         name="(Player)"
         options={{
           header: () => <View className="h-20 bg-background-0/80" />,

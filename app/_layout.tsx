@@ -5,11 +5,12 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font'
 import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import 'react-native-reanimated'
 
 import { useColorScheme } from '@/components/useColorScheme'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { vars } from '@/constants/vars'
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -46,7 +47,7 @@ const RootLayout = () => {
   }
 
   return (
-    <GluestackUIProvider mode="light">
+    <GluestackUIProvider mode="dark">
       <RootLayoutNav />
     </GluestackUIProvider>
   )
@@ -66,10 +67,12 @@ export const queryClient = new QueryClient({
 
 const RootLayoutNav = () => {
   const colorScheme = useColorScheme()
+  console.log('root', vars.$scale.color.primary950)
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
+        <Stack key={colorScheme}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
       </ThemeProvider>

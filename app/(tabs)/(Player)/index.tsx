@@ -1,4 +1,5 @@
 import { HorizontalSpacing, Image, Text, View } from '@/components/ui'
+import BpmController from '@/features/BpmController'
 import MusicController from '@/features/MusicController'
 import MusicProgress from '@/features/MusicProgress'
 import { useRef } from 'react'
@@ -40,7 +41,7 @@ const MusicPlayer = () => {
         </View>
       </View>
       <View className="flex flex-col items-center p-5">
-        <Text className="mb-1 text-2xl font-semibold text-gray-900">Midnight City</Text>
+        <Text className="mb-1 text-2xl font-semibold text-primary-900">Midnight City</Text>
         <Text className="text-base text-gray-500">M83</Text>
         <Text className="mt-1 text-sm text-gray-400">Hurry Up, We're Dreaming</Text>
       </View>
@@ -50,8 +51,11 @@ const MusicPlayer = () => {
         <Text>{formatTime(0)}</Text>
         <Text>-{formatTime(60 * 3 - 0)}</Text>
       </View>
-      <HorizontalSpacing size={40} />
+      <HorizontalSpacing size={20} />
       <MusicController />
+      <HorizontalSpacing size={20} />
+      <BpmController />
+      <MusicProgress onProgressChange={handleProgressChange} initialProgress={0} />
     </View>
   )
 }
